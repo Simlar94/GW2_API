@@ -1,15 +1,19 @@
 $(document).ready(function () {
     //Skolan: 192.168.48.136
     //Hemma: 192.168.1.10
-    var APIUrl = "https://api.guildwars2.com/v2/items/"; //
+    var APIUrl = "https://api.guildwars2.com/v2/items/312"; //
+    
+    var gw2Items = "https://api.guildwars2.com/v2/items/542";
     
     var gw2Test = "https://api.guildwars2.com/v2/account?access_token=9E5B066A-3FD8-084B-87D4-8BA28AFB6EF91BBEFFB5-6BDF-4F49-9853-F7EC76E6F79F"
     
     var gw2test2 = "https://api.guildwars2.com/v2/titles?ids=1,90,91,?access_token=9E5B066A-3FD8-084B-87D4-8BA28AFB6EF91BBEFFB5-6BDF-4F49-9853-F7EC76E6F79F"
     
-    var gw2test3 = "https://api.guildwars2.com/v2/characters/Izior?access_token=9E5B066A-3FD8-084B-87D4-8BA28AFB6EF91BBEFFB5-6BDF-4F49-9853-F7EC76E6F79F";
+    var gw2MyCharacter = "https://api.guildwars2.com/v2/characters/Izior?access_token=9E5B066A-3FD8-084B-87D4-8BA28AFB6EF91BBEFFB5-6BDF-4F49-9853-F7EC76E6F79F";
     
     var DBUrl = "http://192.168.48.136:3000/testdb"; //On Pi: 192.168.48.248:3000/testdb, http://localhost:3000/testdb, home:http://192.168.1.10:3000/testdb
+    
+
     
     var APIDataExists = false;
     var DBDataExists = false;
@@ -20,8 +24,7 @@ $(document).ready(function () {
     //console.log(itemIdStr);
    
 
-
-    $.getJSON(APIUrl + "76245", function (data) {
+    $.getJSON(APIUrl, function (data) {    //Gets a random item
 //22
         //console.log(data);
         
@@ -45,14 +48,10 @@ $(document).ready(function () {
         $(".table-left3").append(tr);
 
     });
-    
-        $.getJSON(gw2test3, function (result) {
-//22    
-        var data = result.equipment;
-        
-            
-            
-        console.log(data[0].slot);
+    /*
+        $.getJSON(gw2test2, function (data) { //Test for equipped items.
+  
+        //console.log(data);    
         
         var name = data.name;
         var icon = data.icon;
@@ -74,8 +73,67 @@ $(document).ready(function () {
         $(".table-left4").append(tr);
 
     });
+*/
+    
+    //Multiple getJSON-requests with jQuery.
+    
+    var getEquippedItems = $.getJSON(gw2MyCharacter);
+    var getItems = $.getJSON("https://api.guildwars2.com/v2/items");
+    
+    $.when(getEquippedItems, getItems).done(function(result1, result2) {
+    
+        
+    var items = result2;    
+    var equipmentData = result1[0];
+        
+    var itemData = result2[0];
+    
+    console.log(items);    
+    console.log(equipmentData.equipment.id);
+    console.log(itemData);
+    
+    for (var i = 0; i < equipmentData.equipment.length; i ++) {  
+            var id = equipmentData.equipment[i].id;
+            var slotName = equipmentData.equipment[i].slot;
+            var slotIcon = equipmentData.equipment
+        
+            
+            
 
-
+            var tr = $("<tr/>");
+            tr.append("<td class='id' style='display:none'>" + id + "</td>");
+            tr.append("<td>" + slotName + "</td>");
+            tr.append("<td><img src='" + + "' style='width: 100%'></td>")
+            $(".table-left4").append(tr);
+        }   
+        });
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //Handle JSON-data from my own database.
     $.getJSON(DBUrl, function (data) {
 
